@@ -1,3 +1,6 @@
+This repo contains a carbon-aware scheduler for ML training jobs.
+Given a job description (deadline, duration, allowed regions) and regional carbon-intensity data, it searches for the best time and place to run the job so that emissions are lower than a “run now in default region” baseline.
+The project includes a clean architecture (JobConfig, CarbonSource, Scheduler, Runner and Metrics modules), a user guide for running real jobs, and a design document for developers who want to extend or integrate the scheduler with cloud or MATLAB workflows.
 # Green AI – Carbon-Aware Training Scheduler
 
 The **Green AI – Carbon-Aware Training Scheduler** is a toy project that explores
