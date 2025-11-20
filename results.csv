@@ -1,0 +1,2 @@
+timestamp_logged,job_name,region,start_time,est_end_time,avg_carbon_intensity,baseline_carbon,actual_carbon,savings_pct
+2025-11-17T22:30:53.635687,resnet_cifar10,eu-north,2025-11-17T22:30:53.391644,2025-11-18T00:30:53.391644,150.00,900.00,300.00,66.67

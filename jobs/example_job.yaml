@@ -1,0 +1,11 @@
+job_name: resnet_cifar10
+script: train_model.py
+deadline: "2025-11-20T18:00:00"
+job_class: "deadline-flexible"
+preferred_regions:
+  - us-east
+  - us-west
+  - eu-north
+max_cost_per_hour: 2.0
+est_duration_hours: 2.0
+default_region: "us-east"
