@@ -39,6 +39,7 @@ bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+---
 ## 3. Project Layout 
 At a high level, you will mainly work with:
 
@@ -51,6 +52,7 @@ src/runner.py – command-line entry point to run the scheduler.
 results.csv – log of scheduling decisions and metrics, created after runs.
 
 Supporting components such as JobConfig, CarbonSource, and Scheduler live in src/ and are documented in DESIGN.md if you want to extend the system.
+---
 
 ## 4. Defining a Training Job (YAML)
 Each training job is defined by a YAML file under jobs/. A typical example:
@@ -93,6 +95,7 @@ Estimated training duration, in hours. Used to compute how far back from the dea
 Region used for the baseline “run now in default region” policy. Must match a region in the carbon data.
 
 To create your own job, copy an existing YAML file (e.g., jobs/example_job.yaml), modify the fields, and save under a new name.
+---
 
 ## 5. Carbon-Intensity Data
 Carbon-intensity data lives in:
@@ -116,6 +119,7 @@ Columns:
 **Note: The scheduler assumes that all preferred_regions and default_region values in your job YAML exist in this CSV.**
 
 You can replace this file with your own data as long as you keep the same column names and timestamp format.
+---
 
 ## 6. Running the Scheduler
 From the project root, run:
@@ -146,6 +150,7 @@ Log metrics to results.csv.
 Launch the training script (e.g., train_model.py) using subprocess.
 
 If the job’s deadline has already passed (or the latest feasible start time is in the past), the scheduler treats the job as urgent and starts it immediately in the best available region.
+---
 
 ## 7. Understanding the Output
 **7.1 Console Output**
@@ -188,6 +193,7 @@ import pandas as pd
 
 df = pd.read_csv("results.csv")
 print(df.tail())
+---
 ## 8. Visualizing Carbon Savings (Optional)
 The repository includes a Jupyter notebook:
 
@@ -208,6 +214,7 @@ Start Jupyter:
 
 jupyter notebook
 Open notebooks/analysis.ipynb and run the cells.
+---
 
 ## 9. Customizing and Extending
 Here are a few simple ways to explore the tool:
@@ -222,6 +229,7 @@ Swap the training script
 Point the script field in your job YAML to your own training entry point (e.g., a real model training script). Make sure it can be called from the command line.
 
 For deeper architectural details (JobConfig, CarbonSource, Scheduler internals), refer to DESIGN.md.
+---
 
 ## 10. Troubleshooting
 The scheduler says no data found for a region/time window
