@@ -1,46 +1,48 @@
-# Green AI – Carbon-Aware Training Scheduler: User Guide
+Green AI – Carbon-Aware Training Scheduler: User Guide
 
-This guide shows you how to configure, run, and interpret the **Green AI – Carbon-Aware Training Scheduler**.
+This guide shows you how to configure, run, and interpret the Green AI – Carbon-Aware Training Scheduler.
 
 The tool helps you:
 
-- Read carbon intensity data for multiple regions.
-- Choose a low-carbon region and start time for a training job, subject to a deadline.
-- Estimate carbon savings compared to a baseline “run now in default region” policy.
-- Launch a training script and log results.
+Read carbon intensity data for multiple regions.
 
----
+Choose a low-carbon region and start time for a training job, subject to a deadline.
 
-## 1. Prerequisites
+Estimate carbon savings compared to a baseline “run now in default region” policy.
 
-- Python 3.9+ installed.
-- Git / command line access.
-- Recommended: a Python virtual environment (e.g., `venv` or `conda`).
+Launch a training script and log results.
+
+1. Prerequisites
+
+Python 3.9+ installed.
+
+Git / command line access.
+
+Recommended: a Python virtual environment (e.g., venv or conda).
 
 Optional but useful:
 
-- Jupyter Notebook (to explore `results.csv` and plots).
-- Basic familiarity with YAML configuration files.
+Jupyter Notebook (to explore results.csv and plots).
 
----
+Basic familiarity with YAML configuration files.
 
-## 2. Installation
+2. Installation
 
 From the project root:
 
-```bash
 pip install -r requirements.txt
+
+
 This installs core dependencies such as pandas and python-dateutil.
 
 If you are using a virtual environment:
 
-bash
-
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
----
-## 3. Project Layout 
+
+3. Project Layout
+
 At a high level, you will mainly work with:
 
 jobs/ – YAML job configuration files (you will create/edit these).
@@ -52,9 +54,9 @@ src/runner.py – command-line entry point to run the scheduler.
 results.csv – log of scheduling decisions and metrics, created after runs.
 
 Supporting components such as JobConfig, CarbonSource, and Scheduler live in src/ and are documented in DESIGN.md if you want to extend the system.
----
 
-## 4. Defining a Training Job (YAML)
+4. Defining a Training Job (YAML)
+
 Each training job is defined by a YAML file under jobs/. A typical example:
 
 job_name: resnet_cifar10
@@ -68,70 +70,77 @@ preferred_regions:
 max_cost_per_hour: 2.0
 est_duration_hours: 2.0
 default_region: "us-east"
-Field summary:
 
-**job_name**
+
+Field summary
+
+job_name
 Unique name for the job. Used in logs and plots.
 
-**script**
+script
 Path to the training script to execute (e.g., train_model.py). In this prototype, the script is a dummy workload, but you can replace it with your own training entry point.
 
-**deadline**
+deadline
 Latest acceptable completion time, in ISO 8601 format (e.g., YYYY-MM-DDTHH:MM:SS). The scheduler only considers start times that allow the job to finish before this deadline.
 
-**job_class**
+job_class
 Placeholder for future policies (e.g., “deadline-flexible”, “cost-sensitive”). In the current prototype, this is informational only.
 
-**preferred_regions**
+preferred_regions
 List of regions the scheduler is allowed to consider (e.g., us-east, us-west, eu-north). These must match region names in carbon_data.csv.
 
-**max_cost_per_hour**
+max_cost_per_hour
 Reserved for future cost-aware scheduling. Currently not used in decisions, but kept in the configuration for extensibility.
 
-**est_duration_hours**
+est_duration_hours
 Estimated training duration, in hours. Used to compute how far back from the deadline we can start the job.
 
-**default_region**
+default_region
 Region used for the baseline “run now in default region” policy. Must match a region in the carbon data.
 
 To create your own job, copy an existing YAML file (e.g., jobs/example_job.yaml), modify the fields, and save under a new name.
----
 
-## 5. Carbon-Intensity Data
+5. Carbon-Intensity Data
+
 Carbon-intensity data lives in:
 
-
 carbon_data/carbon_data.csv
+
+
 The format is:
+
 timestamp,region,carbon_intensity
 2025-11-20T10:00:00,us-east,450
 2025-11-20T10:00:00,us-west,300
 2025-11-20T10:00:00,eu-north,150
 ...
-Columns:
 
-**timestamp** – ISO 8601 time of the measurement.
 
-**region** – region identifier (e.g., us-east).
+Columns
 
-**carbon_intensity** – relative carbon score at that time and region.
+timestamp – ISO 8601 time of the measurement.
 
-**Note: The scheduler assumes that all preferred_regions and default_region values in your job YAML exist in this CSV.**
+region – region identifier (e.g., us-east).
+
+carbon_intensity – relative carbon score at that time and region.
+
+Note: The scheduler assumes that all preferred_regions and default_region values in your job YAML exist in this CSV.
 
 You can replace this file with your own data as long as you keep the same column names and timestamp format.
----
 
-## 6. Running the Scheduler
+6. Running the Scheduler
+
 From the project root, run:
 
-
 python -m src.runner --job-path jobs/example_job.yaml
-Key options:
+
+
+Key options
 
 --job-path
 Path to the YAML file defining the job.
 
-Internally, the runner will:
+What happens internally
 
 Load the job configuration.
 
@@ -150,10 +159,10 @@ Log metrics to results.csv.
 Launch the training script (e.g., train_model.py) using subprocess.
 
 If the job’s deadline has already passed (or the latest feasible start time is in the past), the scheduler treats the job as urgent and starts it immediately in the best available region.
----
 
-## 7. Understanding the Output
-**7.1 Console Output**
+7. Understanding the Output
+7.1 Console Output
+
 On a successful run, you’ll see console messages summarizing:
 
 The chosen region and start time.
@@ -172,7 +181,9 @@ Example (simplified):
 [Metrics] Baseline score: 900
 [Metrics] Carbon-aware score: 300
 [Metrics] Savings: 66.7%
-**7.2 results.csv**
+
+7.2 results.csv
+
 Each run appends a row to results.csv in the project root. Typical columns:
 
 job_name
@@ -193,11 +204,14 @@ import pandas as pd
 
 df = pd.read_csv("results.csv")
 print(df.tail())
----
-## 8. Visualizing Carbon Savings (Optional)
+
+8. Visualizing Carbon Savings (Optional)
+
 The repository includes a Jupyter notebook:
 
 notebooks/analysis.ipynb
+
+
 This notebook:
 
 Loads results.csv.
@@ -213,10 +227,12 @@ Activate your virtual environment (if any).
 Start Jupyter:
 
 jupyter notebook
-Open notebooks/analysis.ipynb and run the cells.
----
 
-## 9. Customizing and Extending
+
+Open notebooks/analysis.ipynb and run the cells.
+
+9. Customizing and Extending
+
 Here are a few simple ways to explore the tool:
 
 Change job deadlines and durations
@@ -229,9 +245,9 @@ Swap the training script
 Point the script field in your job YAML to your own training entry point (e.g., a real model training script). Make sure it can be called from the command line.
 
 For deeper architectural details (JobConfig, CarbonSource, Scheduler internals), refer to DESIGN.md.
----
 
-## 10. Troubleshooting
+10. Troubleshooting
+
 The scheduler says no data found for a region/time window
 
 Check that all region names in your YAML exist in carbon_data.csv.
@@ -249,12 +265,3 @@ Make sure you are running commands from the project root.
 Verify that pip install -r requirements.txt completed without errors.
 
 If you plan to integrate this prototype with cloud schedulers or MATLAB-based workflows, see the “Extensibility and Integration” section in the design document.
-
-If you want the file version I just wrote in the environment, you can treat it as:
-
-`/mnt/data/USER_GUIDE_POLISHED.md`
-
-
-
-
-
