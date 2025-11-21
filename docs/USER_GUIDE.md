@@ -1,13 +1,13 @@
 # Green AI – Carbon-Aware Training Scheduler: User Guide
 
-This guide explains how to configure, run, and interpret the
-**Green AI – Carbon-Aware Training Scheduler**.
+This guide shows you how to configure, run, and interpret the **Green AI – Carbon-Aware Training Scheduler**.
 
-The goal of the tool is to:
+The tool helps you:
+
 - Read carbon intensity data for multiple regions.
 - Choose a low-carbon region and start time for a training job, subject to a deadline.
 - Estimate carbon savings compared to a baseline “run now in default region” policy.
-- Launch the training script and log the results.
+- Launch a training script and log results.
 
 ---
 
@@ -15,7 +15,12 @@ The goal of the tool is to:
 
 - Python 3.9+ installed.
 - Git / command line access.
-- Recommended: a virtual environment for Python packages.
+- Recommended: a Python virtual environment (e.g., `venv` or `conda`).
+
+Optional but useful:
+
+- Jupyter Notebook (to explore `results.csv` and plots).
+- Basic familiarity with YAML configuration files.
 
 ---
 
